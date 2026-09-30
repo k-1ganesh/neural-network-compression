@@ -68,7 +68,7 @@ def compress_cp(weights,rank,n_iter_max=300,tol=1e-6,random_state=42):
         tensor_np,
         rank=rank,
         n_iter_max=n_iter_max,
-        init="svd",
+        init="random",
         tol=tol,
         random_state=random_state,
         verbose=0,
