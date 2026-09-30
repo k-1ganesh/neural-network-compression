@@ -139,9 +139,7 @@ The baseline model is a fully connected MLP with the following architecture:
 The input is a flattened Fashion-MNIST image:
 
 $$
-
 28\times 28 = 784
-
 $$
 
 features.
@@ -172,46 +170,34 @@ This is important: an SVD/CP/Tucker experiment is never initialized from another
 ---
 
 # Global Weight Tensor
-We select the four internal $512\times512$ weight matrices:
+
+We select the four internal $512 \times 512$ weight matrices:
 
 $$
-
-W_1,W_2,W_3,W_4 \in \mathbb{R}^{512\times512}.
-
+W_1, W_2, W_3, W_4 \in \mathbb{R}^{512 \times 512}.
 $$
 
 These matrices are stacked along a third mode to form:
 
 $$
-
-\boxed{
-
-\mathcal{W}\in\mathbb{R}^{512\times512\times4}
-
-}
-
+\boxed{\mathcal{W} \in \mathbb{R}^{512 \times 512 \times 4}}
 $$
 
 with
 
 $$
-
-\mathcal{W}[:,:,1]=W_1,\quad
-
-\mathcal{W}[:,:,2]=W_2,\quad
-
-\mathcal{W}[:,:,3]=W_3,\quad
-
-\mathcal{W}[:,:,4]=W_4.
-
+\begin{aligned}
+\mathcal{W}[:,:,1] &= W_1, \\
+\mathcal{W}[:,:,2] &= W_2, \\
+\mathcal{W}[:,:,3] &= W_3, \\
+\mathcal{W}[:,:,4] &= W_4.
+\end{aligned}
 $$
 
 The four matrices contain:
 
 $$
-
-4(512)(512)=1,048,576
-
+4 \times 512 \times 512 = 1,048,576
 $$
 
 weights.
@@ -227,56 +213,41 @@ The first input layer, the final classification layer, and the biases are left u
 The four hidden matrices are concatenated column-wise:
 
 $$
-
 M=
-
 [W_1\;W_2\;W_3\;W_4]
-
 $$
 
 so that
 
 $$
-
 M\in\mathbb{R}^{512\times2048}.
-
 $$
 
 We compute the singular value decomposition:
 
 $$
-
 M=U\Sigma V^T.
-
 $$
 
 For a chosen rank $r$, the truncated approximation is:
 
 $$
-
 M_r=U_r\Sigma_rV_r^T.
-
 $$
 
 The reconstructed matrix is then split back into four $512\times512$ matrices:
 
 $$
-
 M_r=
-
 [\hat W_1\;\hat W_2\;\hat W_3\;\hat W_4].
-
 $$
 
 ### SVD rank sweep
 The experiment evaluates multiple values of $r$:
 
 $$
-
 r\in
-
 \{1,2,4,8,16,32,64,128,256,384,512\}.
-
 $$
 
 This makes it possible to observe how the reconstruction error and network accuracy change as more rank is retained.
@@ -287,9 +258,7 @@ This makes it possible to observe how the reconstruction error and network accur
 The same tensor
 
 $$
-
 \mathcal{W}\in\mathbb{R}^{512\times512\times4}
-
 $$
 
 is approximated using CP decomposition:
@@ -306,21 +275,15 @@ Here $R$ is the CP rank and $\circ$ denotes the vector outer product.
 The factor matrices have dimensions:
 
 $$
-
 A\in\mathbb{R}^{512\times R},
-
 $$
 
 $$
-
 B\in\mathbb{R}^{512\times R},
-
 $$
 
 $$
-
 C\in\mathbb{R}^{4\times R}.
-
 $$
 
 The reconstructed tensor is converted back to the four hidden weight matrices before being inserted into the MLP.
@@ -329,11 +292,8 @@ The reconstructed tensor is converted back to the four hidden weight matrices be
 The experiment evaluates:
 
 $$
-
 R\in
-
 \{1,2,4,8,16,32,64,128,256\}.
-
 $$
 
 CP is optimized iteratively, so unlike SVD, its decomposition quality depends on the numerical optimization procedure and initialization.
@@ -344,57 +304,39 @@ CP is optimized iteratively, so unlike SVD, its decomposition quality depends on
 The same global tensor is decomposed as:
 
 $$
-
 \mathcal{W}
-
 \approx
-
 \mathcal{G}
-
 \times_1 U_1
-
 \times_2 U_2
-
 \times_3 U_3.
-
 $$
 
 The factor matrices have dimensions:
 
 $$
-
 U_1\in\mathbb{R}^{512\times r_1},
-
 $$
 
 $$
-
 U_2\in\mathbb{R}^{512\times r_2},
-
 $$
 
 $$
-
 U_3\in\mathbb{R}^{4\times r_3},
-
 $$
 
 and the core tensor is:
 
 $$
-
 \mathcal{G}\in
-
 \mathbb{R}^{r_1\times r_2\times r_3}.
-
 $$
 
 For this experiment we use:
 
 $$
-
 r_1=r_2
-
 $$
 
 and vary the third-mode rank independently.
@@ -402,29 +344,21 @@ and vary the third-mode rank independently.
 Since the third mode represents four hidden layers:
 
 $$
-
 r_3\le4.
-
 $$
 
 The Tucker experiment therefore explores configurations such as:
 
 $$
-
 (4,4,1),\;(4,4,2),\;(4,4,4),
-
 $$
 
 $$
-
 (16,16,1),\;(16,16,2),\;(16,16,4),
-
 $$
 
 $$
-
 (32,32,1),\;(32,32,2),\;(32,32,4),
-
 $$
 
 and larger configurations.
@@ -489,23 +423,16 @@ stored factor parameters.
 For CP, the factor storage is approximately:
 
 $$
-
 512R+512R+4R.
-
 $$
 
 For Tucker:
 
 $$
-
 512r_1+
-
 512r_2+
-
 4r_3+
-
 r_1r_2r_3.
-
 $$
 
 ---
@@ -598,7 +525,7 @@ nn_tensor_compression/
 
 ├── compression/
 
-│   ├── \_\_init\_\_.py
+│   ├── __init__.py
 
 │   ├── svd.py
 
@@ -610,7 +537,7 @@ nn_tensor_compression/
 
 ├── experiments/
 
-│   ├── \_\_init\_\_.py
+│   ├── __init__.py
 
 │   └── run_compression.py
 
